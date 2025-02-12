@@ -36,4 +36,17 @@ return {
       { "<leader>lg", "<cmd>LazyGit<cr>", desc = "LazyGit" },
     },
   },
+  {
+    "epwalsh/obsidian.nvim",
+    version = "*",
+    lazy = true,
+    event = {
+      "BufReadPre " .. vim.fn.expand "~" .. "/obsidian-vault/*.md",
+      "BufNewFile " .. vim.fn.expand "~" .. "/obsidian-vault/*.md",
+    },
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+    },
+    opts = require "configs.obsidian",
+  },
 }
