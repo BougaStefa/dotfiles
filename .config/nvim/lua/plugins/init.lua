@@ -49,4 +49,21 @@ return {
     },
     opts = require "configs.obsidian",
   },
+  {
+    "zbirenbaum/copilot.lua",
+    cmd = "Copilot",
+    build = ":Copilot auth",
+    event = "BufReadPost",
+    opts = require "configs.copilot",
+  },
+  {
+    "CopilotC-Nvim/CopilotChat.nvim",
+    dependencies = {
+      { "zbirenbaum/copilot.lua" },
+      { "nvim-lua/plenary.nvim", brach = "master" },
+    },
+    cmd = "CopilotChat",
+    build = "make tiktoken",
+    opts = {},
+  },
 }
