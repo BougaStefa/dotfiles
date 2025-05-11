@@ -24,4 +24,6 @@ require("lazy").setup({
 	require("plugins.git"),
 	require("plugins.leetcode"),
 	require("plugins.whichkey"),
+	require("plugins.todo-comments"),
+	require("plugins.mini"),
 })

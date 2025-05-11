@@ -34,10 +34,10 @@ set("n", "<leader>se", "<C-w>=", { desc = "Make [S]plits [E]qual" }) -- make spl
 set("n", "<leader>xs", ":close<CR>", { desc = "E[x]it [S]plit" }) -- close current split window
 
 -- Navigate between splits
-set("n", "<C-k>", ":wincmd k<CR>", { desc = "Navigate to split above" })
-set("n", "<C-j>", ":wincmd j<CR>", { desc = "Navigate to split below" })
-set("n", "<C-h>", ":wincmd h<CR>", { desc = "Navigate to split left" })
-set("n", "<C-l>", ":wincmd l<CR>", { desc = "Navigate to split right" })
+set("n", "<C-k>", ":wincmd k<CR>", { desc = "Move focus to lower window" })
+set("n", "<C-j>", ":wincmd j<CR>", { desc = "Move focus to upper window" })
+set("n", "<C-h>", ":wincmd h<CR>", { desc = "Move focus to left window" })
+set("n", "<C-l>", ":wincmd l<CR>", { desc = "Move focus to right window" })
 
 -- Keep last yanked when pasting
 set("v", "p", '"_dP', { desc = "[P]aste without yanking selection" })
@@ -47,3 +47,6 @@ set("n", "[d", vim.diagnostic.goto_prev, { desc = "Go to previous [D]iagnostic m
 set("n", "]d", vim.diagnostic.goto_next, { desc = "Go to next [D]iagnostic message" })
 set("n", "<leader>d", vim.diagnostic.open_float, { desc = "[D]iagnostic message" })
 set("n", "<leader>q", vim.diagnostic.setloclist, { desc = "[Q]uickfix list" })
+
+-- Clear highlights on search when pressing <Esc> in normal mode
+set("n", "<Esc>", "<cmd>nohlsearch<CR>", { desc = "Clear search highlighting" })
