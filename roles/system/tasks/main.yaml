@@ -1,0 +1,31 @@
+---
+- name: Create sudoers file for wheel group
+  ansible.builtin.file:
+    path: "/etc/sudoers.d/10-installer"
+    state: touch
+    mode: "0440"
+  become: yes
+
+# Then add the wheel group configuration
+- name: Configure sudo access for wheel group
+  ansible.builtin.lineinfile:
+    path: "/etc/sudoers.d/10-installer"
+    line: "%wheel ALL=(ALL) NOPASSWD: ALL"
+    create: yes
+    validate: "visudo -cf %s"
+  become: yes
+
+- name: Create the `aur_builder` user
+  ansible.builtin.user:
+    name: aur_builder
+    create_home: yes
+    group: wheel
+  become: yes
+
+- name: Allow the `aur_builder` user to run `sudo pacman` without a password
+  ansible.builtin.lineinfile:
+    path: /etc/sudoers.d/11-install-aur_builder
+    line: "aur_builder ALL=(ALL) NOPASSWD: /usr/bin/pacman"
+    create: yes
+    validate: "visudo -cf %s"
+  become: yes

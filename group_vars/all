@@ -1,0 +1,10 @@
+default_roles:
+    - dwm
+    - system
+    - zsh
+    - zen
+    - neovim
+    - git
+    - tmux
+    - ghostty
+    - discord
