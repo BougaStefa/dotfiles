@@ -37,4 +37,5 @@ ansible-galaxy install -r requirements.yml
 # Run playbook with manual vault password entry
 ansible-playbook --diff \
   --ask-vault-pass \
+  --ask-become-pass \
   main.yaml "$@"
