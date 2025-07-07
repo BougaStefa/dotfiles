@@ -29,3 +29,20 @@
     create: yes
     validate: "visudo -cf %s"
   become: yes
+
+- name: Clone yay for builder
+  ansible.builtin.git:
+    repo: https://aur.archlinux.org/yay.git
+    dest: /home/aur_builder/.build/yay
+    version: master
+  become: yes
+  become_user: aur_builder
+
+- name: Build and install yay
+  ansible.builtin.command:
+    cmd: makepkg -si --noconfirm
+    chdir: /home/aur_builder/.build/yay
+  become: yes
+  become_user: aur_builder
+  args:
+    creates: /usr/bin/yay
