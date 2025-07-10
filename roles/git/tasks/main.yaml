@@ -33,7 +33,7 @@
 - name: Set rebase.autoStash
   community.general.git_config:
     name: rebase.autoStash
-    scope: globat
+    scope: global
     value: true
 
 - name: Set user.email
