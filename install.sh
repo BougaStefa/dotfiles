@@ -20,16 +20,16 @@ trap catch_errors ERR
 CATEGORY="${1:-}"
 
 echo "==> Running system prep script..."
-bash "$DOTFILES_DATA_DIR/setup-system.sh"
+source "$DOTFILES_DATA_DIR/setup-system.sh"
 
 echo "==> Setting up AUR helper..."
-bash "$DOTFILES_SCRIPTS_DIR/aur.sh"
+source "$DOTFILES_SCRIPTS_DIR/aur.sh"
 
 echo "==> Installing packages..."
 if [[ -n "$CATEGORY" ]]; then
-  bash "$DOTFILES_SCRIPTS_DIR/packages.sh" "$CATEGORY"
+  source "$DOTFILES_SCRIPTS_DIR/packages.sh" "$CATEGORY"
 else
-  bash "$DOTFILES_SCRIPTS_DIR/packages.sh"
+  source "$DOTFILES_SCRIPTS_DIR/packages.sh"
 fi
 echo "==> Install script complete."
 

@@ -41,7 +41,7 @@ echo -e "\n$art\n"
 
 echo "==> Running install script..."
 if [[ -f "$DOTFILES_DIR/install.sh" ]]; then
-  bash "$DOTFILES_DIR/install.sh"
+  source "$DOTFILES_DIR/install.sh"
 else
   echo "install.sh not found in $DOTFILES_DIR"
   exit 1
