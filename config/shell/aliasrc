@@ -1,0 +1,48 @@
+#!/bin/sh
+
+# Use neovim with vim if present
+[ -x "$(command -v nvim)" ] && vim="nvim" vimdiff="nvim -d"
+
+# Point to the custom xinitrc path
+[ -f "$XINITRC" ] && alias startx='startx $XINITRC'
+
+# Sudo some system commands
+for command in mount umount pacman shutdown poweroff reboot ; do
+    alias $command="sudo $command"
+done; unset command
+
+scedit() {
+	choice="$(find ~/.local/bin -mindepth 1 -printf '%P\n' | fzf)"
+	[ -f "$HOME/.local/bin/$choice" ] && $EDITOR "$HOME/.local/bin/$choice"
+	}
+
+# Some verbosity settings for common commands
+alias \
+	cp="cp -iv" \
+	mv="mv -iv" \
+	rm="rm -vI" \
+	bc="bc -ql" \
+	rsync="rsync -vrPlu" \
+	mkd="mkdir -pv" \
+	yt="yt-dlp --embed-metadata -i" \
+	yta="yt -x -f bestaudio/best" \
+	ytt="yt --skip-download --write-thumbnail" \
+
+
+# Colorize common commands when possible
+alias \
+	ls="ls -hN --color=auto --group-directories-first" \
+	grep="grep --color=auto" \
+	diff="diff --color=auto" \
+	ip="ip -color=auto"
+
+# Some common commands that are a bit long
+alias \
+	ka="killall" \
+	g="git" \
+	YT="youtube-viewer" \
+	sdn="shutdown -h now" \
+	e='$EDITOR' \
+	v='$EDITOR' \
+	p="pacman" \
+	z="zathura"

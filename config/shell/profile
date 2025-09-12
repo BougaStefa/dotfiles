@@ -1,0 +1,33 @@
+#!/bin/sh
+
+# Adding directories in ~/.local/bin to $PATH
+export PATH="$PATH:$(find ~/.local/bin -type d | paste -sd ':' -)"
+
+
+# Default programs
+export EDITOR="nvim"
+export TERMINA="ghostty"
+export TERMINAL_PROGRAM="ghostty"
+export BROWSER="zen-browser"
+
+# Cleaning up HOME directory
+export XDG_CONFIG_HOME="$HOME/.config"
+export XDG_DATA_HOME="$HOME/.local/share"
+export XDG_CACHE_HOME="$HOME/.cache"
+export XINITRC="$XDG_CONFIG_HOME/x11/xinitrc"
+export INPUTRC="$XDG_CONFIG_HOME/shell/inputrc"
+export ZDOTDIR="$XDG_CONFIG_HOME/zsh"
+export TMUX_TMPDIR="$XDG_RUNTIME_DIR"
+export CARGO_HOME="$XDG_DATA_HOME/cargo"
+export GOPATH="$XDG_DATA_HOME/go"
+export GOMODCACHE="$XDG_CACHE_HOME/go/mod"
+export HISTFILE="$XDG_DATA_HOME/history"
+export ANSIBLE_CONFIG="$XDG_CONFIG_HOME/ansible/ansible.cfg"
+export PYTHONSTARTUP="$XDG_CONFIG_HOME/python/pythonrc.py"
+export SQLITE_HISTFILE="$XDG_DATA_HOME/sqlite_history"
+export FZF_DEFAULT_OPTS="--layout=reverse --height 40%"
+export QT_QPA_PLATFORMTHEME="gtk2"
+export MOZ_USE_XINPUT2=1
+export _JAVA_AWT_WM_NONREPARENTING=1
+
+[ "$(tty)" = "/dev/tty1" ] && ! pidof -s Xorg >/dev/null 2>&1 && exec startx "$XINITRC"
