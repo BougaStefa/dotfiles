@@ -20,7 +20,7 @@ catch_errors() {
 trap catch_errors ERR
 
 echo "==> Running system prep script..."
-source "$DOTFILES_DATA_DIR/prep.sh"
+source "$DOTFILES_SCRIPTS_DIR/prep.sh"
 
 echo "==> Setting up AUR helper..."
 source "$DOTFILES_SCRIPTS_DIR/aur.sh"
