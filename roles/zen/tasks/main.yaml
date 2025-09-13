@@ -1,7 +1,0 @@
-- name: Install zen-browser-bin from AUR
-  kewlfft.aur.aur:
-    name: zen-browser-bin
-    state: latest
-    use: yay
-  become: yes
-  become_user: aur_builder

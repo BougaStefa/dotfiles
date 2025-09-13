@@ -1,0 +1,81 @@
+package,description,category
+arandr,GUI for XRandR (display settings),system
+atool,Archive manager,system
+bat,Better 'cat' command,system
+bc,Math language,system
+bluetui,Terminal based bluetooth manager,system
+brightnessctl,Screen brightness control,system
+btop,Resource monitor,system
+calcurse,Calendar,system
+cargo,Rust package manager,dev
+clang,C/C++ compiler,dev
+docker,Containerization platform,dev
+discord,Ventrillo 2.0,media
+dunst,Notification daemon,system
+dust,Enhanced 'du' command for disk usage,system
+fastfetch,System information tool,system
+fd,Fast file finder,system
+ffmpeg,Video converter,media
+fzf,Fuzzy finder,system
+ghostty,Terminal emulator,system
+github-cli,Github CLI tool,dev
+gruvbox-gtk-theme-git,GTK theme,system
+impala,Manage WiFi TUI,system
+iwd,Wireless daemon,system
+jq,CLI JSON processor,dev
+lazydocker,TUI for docker,dev
+lazygit,TUI for git,dev
+less,Pager,system
+lf,File manager,system
+libnotify,Notification library,system
+luarocks,Lua package manager,dev
+maim,Screenshot tool,media
+man,Manual,system
+mediainfo,Media info tool,media
+mise,Manage dev environments,dev
+mpc,Music player daemon client,media
+mpd,Music player daemon,media
+mpv,Media Player,media
+ncmpcpp,Frontend for MPD (Can test RMPC as well),media
+nsxiv,Image viewer (testing vs feh),media
+neovim,Text editor,dev
+ntfs-3g,NTFS support (for mounting USB drives),system
+obsidian,Note taking app,media
+openssh,OpenSSH for remote access,system
+pamixer,Audio control for scripts,system
+pipewire-pulse,Compatibility layer,system
+playerctl,Media player controller,media
+polkit,Manage user privileges escalation,system
+power-profiles-daemon,Power profiles,system
+pulsemixer,Audio mixer TUI,media
+ripgrep,Fast search tool,system
+rsync,For backups and file transfers,system
+slock,Simple screen locker,system
+task-spooler,Queue and run tasks (for downloads etc.),system
+tldr,Community man pages,system
+tmux,Terminal multiplexer,system
+transmission-cli,Torrent client,media
+tremc,Transmission frontend,media
+ttf-cascadia-mono-nerd,Nerd fonts,system
+ttf-dejavu,Nerd fonts,system
+ttf-font-awesome,Nerd fonts,system
+ttf-jetbrains-mono-nerd,Nerd fonts,system
+ufw,Firewall,system
+ufw-docker,Firewall docker fix,system
+unclutter,Hide cursor,system
+unzip,duhdoy,system
+wireplumber,Pipewire session manager,system
+xcape,Reconfigure modifier keys,system
+xclip,Clipboard manager,system
+xcompmgr,X11 compositor,system
+xdotool,Simulate keypresses and mouse activity,system
+xorg-server,Display server,system
+xorg-xinit,Starts the X server,system
+xorg-xset,Configuring X server settings,system
+xwallpaper,Simple wallpaper setter (testing vs feh),system
+yt-dlp,YouTube downloader,media
+zathura,PDF viewer,media
+zathura-pdf-mupdf,Zathura plugin,media
+zen-browser-bin,Firefork,media
+zsh,zee shell,system
+zsh-fast-syntax-highlighting,Name kind of already says it all,system

@@ -1,0 +1,18 @@
+# Visual Stuff
+theme = GruvboxDark
+gtk-titlebar = false
+background-opacity = 0.85
+font-family = JetBrainsMono Nerd Font
+mouse-hide-while-typing = true
+
+# Unbind tabs and panes because TMUX
+keybind = ctrl+shift+t=unbind
+keybind = ctrl+shift+e=unbind
+keybind = ctrl+shift+n=unbind
+keybind = ctrl+shift+o=unbind
+keybind = ctrl+shift+q=unbind
+keybind = ctrl+shift+w=unbind
+
+# Unbind full screen
+keybind = ctrl+enter=unbind
+
