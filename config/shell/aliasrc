@@ -39,7 +39,6 @@ alias \
 # Some common commands that are a bit long
 alias \
 	ka="killall" \
-	g="git" \
 	YT="youtube-viewer" \
 	sdn="shutdown -h now" \
 	e='$EDITOR' \

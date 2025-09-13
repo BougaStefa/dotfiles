@@ -27,6 +27,12 @@ if ! command -v git &>/dev/null; then
   sudo pacman -Sy --noconfirm --needed git
 fi
 
+echo "==> Ensuring gum is installed..."
+if ! command -v gum &>/dev/null; then
+  echo "==> Installing gum..."
+  sudo pacman -Sy --noconfirm --needed gum
+fi
+
 DOTFILES_REPO="BougaStefa/dotfiles"
 DOTFILES_DIR="$HOME/.dotfiles"
 

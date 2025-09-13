@@ -3,6 +3,8 @@ arandr,GUI for XRandR (display settings),system
 atool,Archive manager,system
 bat,Better 'cat' command,system
 bc,Math language,system
+bluetui,Terminal based bluetooth manager,system
+brightnessctl,Screen brightness control,system
 btop,Resource monitor,system
 calcurse,Calendar,system
 cargo,Rust package manager,dev
@@ -19,6 +21,7 @@ ghostty,Terminal emulator,system
 github-cli,Github CLI tool,dev
 gruvbox-gtk-theme-git,GTK theme,system
 impala,Manage WiFi TUI,system
+iwd,Wireless daemon,system
 jq,CLI JSON processor,dev
 lazydocker,TUI for docker,dev
 lazygit,TUI for git,dev

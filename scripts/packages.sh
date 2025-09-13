@@ -8,8 +8,6 @@ if [[ ! -f "$CSV_FILE" ]]; then
   exit 1
 fi
 
-# Optional: set CATEGORY to filter, e.g. CATEGORY="dev"
-CATEGORY="$1"
 if [[ -n "$CATEGORY" ]]; then
   echo "==> Filtering packages by category: $CATEGORY"
 else
