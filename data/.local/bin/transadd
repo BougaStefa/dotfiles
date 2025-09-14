@@ -1,0 +1,13 @@
+#!/bin/sh
+
+# Check if transmission-daemon is running; if not, start it and notify
+if ! pidof transmission-daemon >/dev/null; then
+  transmission-daemon
+  notify-send "Starting transmission daemon..."
+  sleep 3
+fi
+
+# Add torrent(s) via transmission-remote
+if transmission-remote -a "$@"; then
+  notify-send "🔽 Torrent added."
+fi

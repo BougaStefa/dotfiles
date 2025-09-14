@@ -12,6 +12,11 @@ setopt inc_append_history
 
 # Source if exists
 [ -f "${XDG_CONFIG_HOME:-$HOME/.config}/shell/aliasrc" ] && source "${XDG_CONFIG_HOME:-$HOME/.config}/shell/aliasrc"
+[ -f ~/.local/bin/mise ] && eval "$(~/.local/bin/mise activate zsh)"
+if command -v fzf >/dev/null 2>&1; then
+  [ -f /usr/share/fzf/key-bindings.zsh ] && source /usr/share/fzf/key-bindings.zsh
+  [ -f /usr/share/fzf/completion.zsh ] && source /usr/share/fzf/completion.zsh
+fi
 
 
 # Enable completion

@@ -27,6 +27,7 @@ alias \
 	yt="yt-dlp --embed-metadata -i" \
 	yta="yt -x -f bestaudio/best" \
 	ytt="yt --skip-download --write-thumbnail" \
+    ff="fzf --preview 'bat --style=numbers --color=always {}'"
 
 
 # Colorize common commands when possible
@@ -45,3 +46,11 @@ alias \
 	v='$EDITOR' \
 	p="pacman" \
 	z="zathura"
+
+# Too lazy to type
+alias \
+    ..="cd .." \
+    ...="cd ../.." \
+    ....="cd ../../.." \
+    lg="lazygit" \
+    ld="lazydocker" \
