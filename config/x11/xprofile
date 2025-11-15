@@ -5,7 +5,7 @@ setbg &
 
 xrdb ${XDG_CONFIG_HOME:-$HOME/.config}/x11/xresources & xrdbpid=$!
 
-autostart="dunst remapd xcompmgr"
+autostart="dunst remapd xcompmgr xbanish"
 
 for program in $autostart; do
     pidof -sx "$program" || "$program" &

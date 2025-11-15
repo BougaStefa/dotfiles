@@ -65,6 +65,7 @@ ufw-docker,Firewall docker fix,system
 unclutter,Hide cursor,system
 unzip,duhdoy,system
 wireplumber,Pipewire session manager,system
+xbanish,Hide cursor when typing,system
 xcape,Reconfigure modifier keys,system
 xclip,Clipboard manager,system
 xcompmgr,X11 compositor,system
