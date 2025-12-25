@@ -1,0 +1,10 @@
+#!/bin/bash
+
+# key repeat rate 50 per second with 300ms delay
+xset r rate 300 50
+# Map caps lock te ctrl modifier 
+setxkbmap -option caps:ctrl_modifier
+# Map tap caps (now control) to escape
+killall xcape 2>/dev/null ; xcape -e 'Control_L=Escape' &
+# if caps somehow got turned on, turn it off
+xser -q | grep -q "Caps Lock:\s*on" && xdotool key Caps_Lock
