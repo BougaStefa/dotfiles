@@ -1,0 +1,37 @@
+#!/bin/sh
+
+# symlink location
+bgloc="${XDG_DATA_HOME:-$HOME/.local/share}/bg"
+
+apply_wallpaper() {
+  if command -v xwallpaper >/dev/null 2>&1; then
+    xwallpaper --zoom "$bgloc"
+  else
+    notify-send "setbg: xwallpaper not found" "Install xwallpaper" -u normal
+    exit 1
+  fi
+}
+
+# if no argument is given, just reapply the current wallpaper (what's used on startup)
+if [ "${1-}" = "" ]; then
+  # if no symlink exists, exit silently
+  [ -e "$bgloc" ] || exit 0
+  apply_wallpaper
+  exit 0
+fi
+
+# get path to the real file
+trueloc="$(readlink -f "$1")"
+
+[ -f "$trueloc" ] || { notify-send "setbg:" "bg is not a file." -u normal; exit 1; }
+
+case "$(file --mime-type -b "$trueloc" 2>/dev/null || true)" in
+  image/*) : ;;
+  *) notify-send "setbg:" "file is not an image." -u normal; exit 1 ;;
+esac
+
+# overwrite symlink to point to new wallpaper
+ln -sf "$trueloc" "$bgloc"
+
+apply_wallpaper
+notify-send -i "$bgloc" "setbg: wallpaper set" -u low
