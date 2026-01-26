@@ -16,7 +16,7 @@ ln -sf "$CONFIG_DEST/x11/xprofile" "$HOME/.xprofile"
 ln -sf "$CONFIG_DEST/shell/profile" "$HOME/.zprofile"
 
 echo "==> Setting Zsh as the default shell for $USER..."
-chsh -s /bin/zsh "$USER" >/dev/null 2>&1
+sudo chsh -s /bin/zsh "$USER"
 
 echo "==> Creating Zsh cache directory..."
 sudo -u "$USER" mkdir -p "/home/$USER/.cache/zsh/"
