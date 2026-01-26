@@ -4,7 +4,8 @@ set -e
 
 SUCKLESS_REPOS=(
   "https://github.com/BougaStefa/dwm.git"
-  "https://git.suckless.org/dmenu"
+  "https://github.com/BougaStefa/dmenu.git"
+  "https://github.com/BougaStefa/st.git"
 )
 INSTALL_DIR="$HOME/.local/src"
 
