@@ -51,7 +51,6 @@ pulsemixer,Audio mixer TUI,media
 ripgrep,Fast search tool,system
 rsync,For backups and file transfers,system
 slock,Simple screen locker,system
-task-spooler,Queue and run tasks (for downloads etc.),system
 tldr,Community man pages,system
 tmux,Terminal multiplexer,system
 transmission-cli,Torrent client,media
