@@ -6,8 +6,8 @@ export PATH="$PATH:$(find ~/.local/bin -type d | paste -sd ':' -)"
 
 # Default programs
 export EDITOR="nvim"
-export TERMINA="ghostty"
-export TERMINAL_PROGRAM="ghostty"
+export TERMINAL="st"
+export TERMINAL_PROGRAM="st"
 export BROWSER="zen-browser"
 
 # Cleaning up HOME directory

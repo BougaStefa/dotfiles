@@ -17,7 +17,6 @@ fastfetch,System information tool,system
 fd,Fast file finder,system
 ffmpeg,Video converter,media
 fzf,Fuzzy finder,system
-ghostty,Terminal emulator,system
 github-cli,Github CLI tool,dev
 gruvbox-gtk-theme-git,GTK theme,system
 impala,Manage WiFi TUI,system
