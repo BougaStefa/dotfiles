@@ -37,7 +37,7 @@ setopt auto_param_slash # Auto add slash to directories when completing
 setopt no_case_glob no_case_match # Case insensitive cmp
 setopt globdots # Indlude dotfiles
 setopt interactive_comments # Allow comments
-stty stop udef # disable accidental pausing
+stty stop undef # disable accidental pausing
 
 # vi mode
 bindkey -v
