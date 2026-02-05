@@ -35,7 +35,9 @@ fi
 echo "==> Running config setup..."
 source "$DOTFILES_SCRIPTS_DIR/config.sh"
 
-#Testing out tranfserring the plugins within the config
+echo "==> Setting up mise and installing global tools..."
+source "$DOTFILES_SCRIPTS_DIR/mise.sh"
+
 echo "==> Setting up tmux plugins..."
 bash "$DOTFILES_SCRIPTS_DIR/tmux.sh"
 
