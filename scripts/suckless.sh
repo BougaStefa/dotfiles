@@ -6,6 +6,7 @@ SUCKLESS_REPOS=(
   "https://github.com/BougaStefa/dwm.git"
   "https://github.com/BougaStefa/dmenu.git"
   "https://github.com/BougaStefa/st.git"
+  "https://github.com/BougaStefa/dwmblocks.git"
 )
 INSTALL_DIR="$HOME/.local/src"
 
