@@ -1,0 +1,76 @@
+#!/bin/sh
+
+# Exit silently if desktop
+ls /sys/class/power_supply/BAT* >/dev/null 2>&1 || exit 0
+
+# Read battery info
+perc=$(cat /sys/class/power_supply/BAT*/capacity 2>/dev/null | head -n1)
+state=$(cat /sys/class/power_supply/BAT*/status 2>/dev/null | head -n1)
+
+# Ensure percentage exists
+[ -z "$perc" ] && exit 0
+
+# Pad single digit
+[ ${#perc} -eq 1 ] && perc="0$perc"
+
+# Default (charging icon)
+icon=""
+icon_file="bolt-solid.svg"
+
+# Change icon only when discharging
+if [ "$state" = "Discharging" ]; then
+    if [ "$perc" -lt 16 ]; then
+        icon=""
+        icon_file="battery-empty-solid.svg"
+    elif [ "$perc" -lt 35 ]; then
+        icon=""
+        icon_file="battery-quarter-solid.svg"
+    elif [ "$perc" -lt 59 ]; then
+        icon=""
+        icon_file="battery-half-solid.svg"
+    elif [ "$perc" -lt 84 ]; then
+        icon=""
+        icon_file="battery-three-quarters-solid.svg"
+    else
+        icon=""
+        icon_file="battery-full-solid.svg"
+    fi
+fi
+
+# -----------------------------
+# Display logic (dwmblocks)
+# -----------------------------
+
+if [ "$perc" -gt 20 ]; then
+    echo "^c#ddc7a1^$icon    ^c#928374^$perc^c#ddc7a1^"
+else
+    echo "^c#da9f8a^    ^c#928374^$perc^c#ddc7a1^"
+fi
+
+# -----------------------------
+# Notifications (background)
+# -----------------------------
+
+(
+    if [ "$perc" -lt 20 ] && [ "$state" = "Discharging" ]; then
+        notify-send -r 93433 -u critical \
+            -i "$XDG_DATA_HOME/assets/icons/triangle-exclamation-solid.svg" \
+            -a scripts -t 8500 \
+            "Battery Level Critical" \
+            "<i>$perc% / Connect to power.</i>"
+    fi
+) &
+
+# -----------------------------
+# Click handling
+# -----------------------------
+
+case "$BLOCK_BUTTON" in
+    1)
+        notify-send -r 13 \
+            -i "$XDG_DATA_HOME/assets/icons/$icon_file" \
+            -a scripts \
+            "Battery" "$perc% / $state"
+        ;;
+esac
+
