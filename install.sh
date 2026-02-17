@@ -35,6 +35,9 @@ fi
 echo "==> Running config setup..."
 source "$DOTFILES_SCRIPTS_DIR/config.sh"
 
+echo "==> Copying assets..."
+source "$DOTFILES_SCRIPTS_DIR/assets.sh"
+
 echo "==> Setting up mise and installing global tools..."
 source "$DOTFILES_SCRIPTS_DIR/mise.sh"
 
