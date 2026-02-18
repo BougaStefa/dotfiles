@@ -1,0 +1,7 @@
+#!/bin/bash
+
+echo "^b#111111^^c#928374^$(date '+%b %d %a') ^c#ddc7a1^$(date '+%H:%M')"
+
+case "$BLOCK_BUTTON" in
+	1) $BROWSER "https://calendar.google.com/calendar/r" ;
+esac
