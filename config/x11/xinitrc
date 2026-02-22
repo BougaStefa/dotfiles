@@ -12,4 +12,8 @@ fi
 dbus-update-activation-environment --systemd --all
 
 # Start dwm (replace current process)
-exec dwm
+dwmblocks &
+while true; do
+    dwm
+    sleep 1
+done
