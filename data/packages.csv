@@ -34,6 +34,7 @@ mediainfo,Media info tool,media
 mise,Manage dev environments,dev
 mpc,Music player daemon client,media
 mpd,Music player daemon,media
+mpd-mpris,MPD MPRIS plugin,media
 mpv,Media Player,media
 ncmpcpp,Frontend for MPD (Can test RMPC as well),media
 nsxiv,Image viewer (testing vs feh),media

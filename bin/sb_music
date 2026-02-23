@@ -1,32 +1,35 @@
 #!/bin/sh
 
-# Click handling
-case "$BLOCK_BUTTON" in
-    1)  playerctl play-pause
-        ;;
-    4)  playerctl previous
-        ;;
-    5)  playerctl next
-        ;;
-esac
+# Ensure player_loop is running so dwmblocks updates on player events
+pidof -x player_loop >/dev/null 2>&1 || player_loop >/dev/null 2>&1 &
 
-# Show the first playing player, then fall back to first paused player
-PLAYERS="${MUSIC_PLAYING_PLAYERS:-chromium mpd mpv firefox}"
-PAUSED_ARTIST=""
-PAUSED_TITLE=""
+PLAYERS="${MUSIC_PLAYING_PLAYERS:-chromium firefox mpv mpd}"
 
+# Priority: show first Playing player (browser/mpv/mpd).
+# If nothing is playing, fall back to mpd only (shown even if paused).
+# Browser and mpv are never shown paused.
 for PLAYER in $PLAYERS; do
-    STATUS=$(playerctl --player="$PLAYER" status 2>/dev/null)
-    [ "$STATUS" = "Playing" ] || [ "$STATUS" = "Paused" ] || continue
-    artist=$(playerctl --player="$PLAYER" metadata --format "{{ artist }}")
-    title=$(playerctl --player="$PLAYER" metadata --format "{{ title }}")
-    if [ "$STATUS" = "Playing" ]; then
-        echo "^b#111111^^c#ddc7a1^󰎇 $artist - $title^d^"
-        exit 0
-    elif [ -z "$PAUSED_ARTIST" ]; then
-        PAUSED_ARTIST="$artist"
-        PAUSED_TITLE="$title"
-    fi
+    [ "$(playerctl --player="$PLAYER" status 2>/dev/null)" != "Playing" ] && continue
+    artist=$(playerctl --player="$PLAYER" metadata --format "{{ artist }}" 2>/dev/null)
+    title=$(playerctl --player="$PLAYER" metadata --format "{{ title }}" 2>/dev/null)
+    echo "^b#111111^^c#ddc7a1^󰎇 $artist - $title^d^"
+    # Click handling for the displayed player
+    case "$BLOCK_BUTTON" in
+        1) playerctl --player="$PLAYER" play-pause ;;
+        4) playerctl --player="$PLAYER" previous ;;
+        5) playerctl --player="$PLAYER" next ;;
+    esac
+    exit 0
 done
 
-[ -n "$PAUSED_TITLE" ] && echo "^b#111111^^c#ddc7a1^󰏤 $PAUSED_ARTIST - $PAUSED_TITLE^d^"
+# Fallback: mpd paused
+artist=$(playerctl --player=mpd metadata --format "{{ artist }}" 2>/dev/null)
+title=$(playerctl --player=mpd metadata --format "{{ title }}" 2>/dev/null)
+[ -z "$title" ] && exit 0
+echo "^b#111111^^c#ddc7a1^󰏤 $artist - $title^d^"
+case "$BLOCK_BUTTON" in
+    1) playerctl --player=mpd play-pause ;;
+    4) playerctl --player=mpd previous ;;
+    5) playerctl --player=mpd next ;;
+esac
+
