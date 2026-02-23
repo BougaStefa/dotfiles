@@ -1,0 +1,50 @@
+#!/bin/bash
+
+set -euo pipefail
+export DISPLAY="${DISPLAY:-:0}"
+
+for cmd in maim xclip notify-send; do
+  command -v "$cmd" &>/dev/null || { echo "Missing: $cmd" >&2; exit 1; }
+done
+
+OUTDIR="${2:-$HOME/Pictures}"
+mkdir -p "$OUTDIR"
+FILE="$OUTDIR/$(date +%Y%m%d_%H%M%S).png"
+
+show_help() {
+  cat <<EOF
+Usage: $0 [full|window] [output_dir]
+  (no args)  Area selection
+  full       Full screen
+  window     Active window
+EOF
+}
+
+post() {
+  xclip -selection clipboard -t image/png -i "$FILE"
+  notify-send -i "$FILE" "Screenshot: $(basename "$FILE")"
+}
+
+capture_full() {
+  maim "$FILE" && post
+}
+
+capture_window() {
+  command -v xdotool &>/dev/null || { echo "Missing: xdotool" >&2; exit 1; }
+  maim -u -i "$(xdotool getactivewindow)" "$FILE" && post
+}
+
+capture_selection() {
+  maim -su "$FILE" && post
+}
+
+main() {
+  case "${1:-}" in
+    -h|--help) show_help ;;
+    full)      capture_full ;;
+    window)    capture_window ;;
+    *)         capture_selection ;;
+  esac
+}
+
+main "$@"
