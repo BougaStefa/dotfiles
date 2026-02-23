@@ -1,0 +1,32 @@
+#!/bin/sh
+
+# Click handling
+case "$BLOCK_BUTTON" in
+    1)  playerctl play-pause
+        ;;
+    4)  playerctl previous
+        ;;
+    5)  playerctl next
+        ;;
+esac
+
+# Show the first playing player, then fall back to first paused player
+PLAYERS="${MUSIC_PLAYING_PLAYERS:-chromium mpd mpv firefox}"
+PAUSED_ARTIST=""
+PAUSED_TITLE=""
+
+for PLAYER in $PLAYERS; do
+    STATUS=$(playerctl --player="$PLAYER" status 2>/dev/null)
+    [ "$STATUS" = "Playing" ] || [ "$STATUS" = "Paused" ] || continue
+    artist=$(playerctl --player="$PLAYER" metadata --format "{{ artist }}")
+    title=$(playerctl --player="$PLAYER" metadata --format "{{ title }}")
+    if [ "$STATUS" = "Playing" ]; then
+        echo "^b#111111^^c#ddc7a1^󰎇 $artist - $title^d^"
+        exit 0
+    elif [ -z "$PAUSED_ARTIST" ]; then
+        PAUSED_ARTIST="$artist"
+        PAUSED_TITLE="$title"
+    fi
+done
+
+[ -n "$PAUSED_TITLE" ] && echo "^b#111111^^c#ddc7a1^󰏤 $PAUSED_ARTIST - $PAUSED_TITLE^d^"

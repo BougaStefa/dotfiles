@@ -1,0 +1,13 @@
+#!/bin/sh
+
+# Kill any existing instance and its children
+pkill --ignore-ancestors -x player_loop 2>/dev/null
+pkill -f "playerctl --follow" 2>/dev/null
+sleep 0.2
+
+# Signal dwmblocks to update the music block on every player state change
+playerctl --follow --player=chromium,mpd,mpv,firefox status 2>/dev/null | \
+    while read -r _; do kill -45 $(pidof dwmblocks); done &
+playerctl --follow --player=chromium,mpd,mpv,firefox metadata --format "x" 2>/dev/null | \
+    while read -r _; do kill -45 $(pidof dwmblocks); done &
+wait

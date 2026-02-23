@@ -6,7 +6,7 @@ xset s off -dpms
 
 xrdb ${XDG_CONFIG_HOME:-$HOME/.config}/x11/xresources & xrdbpid=$!
 
-autostart="dunst remaps xcompmgr xbanish"
+autostart="dunst remaps xcompmgr xbanish player_loop"
 
 for program in $autostart; do
     pidof -sx "$program" || "$program" &
