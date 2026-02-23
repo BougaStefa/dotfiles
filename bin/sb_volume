@@ -1,0 +1,26 @@
+#!/bin/sh
+
+case "$BLOCK_BUTTON" in
+    1)  st -t pulsemixer -e pulsemixer
+        kill -44 $(pidof dwmblocks)
+        ;;
+    3)  pactl set-sink-mute @DEFAULT_SINK@ toggle
+        ;;
+    4)  pactl set-sink-volume @DEFAULT_SINK@ +5%
+        ;;
+    5)  pactl set-sink-volume @DEFAULT_SINK@ -5%
+        ;;
+esac
+
+vol=$(pactl get-sink-volume @DEFAULT_SINK@ | grep -o '[0-9]\+%' | head -n1 | tr -d '%')
+mute=$(pactl get-sink-mute @DEFAULT_SINK@ | awk '{print $2}')
+
+if [ "$mute" = "yes" ] || [ "$vol" -eq 0 ]; then
+    echo "^b#111111^^c#ddc7a1^󰖁 muted^d^"
+elif [ "$vol" -ge 70 ]; then
+    echo "^b#111111^^c#ddc7a1^󰕾 $vol%^d^"
+elif [ "$vol" -ge 30 ]; then
+    echo "^b#111111^^c#ddc7a1^󰖀 $vol%^d^"
+else
+    echo "^b#111111^^c#ddc7a1^󰕿 $vol%^d^"
+fi
