@@ -1,0 +1,56 @@
+#!/usr/bin/env bash
+
+search_dirs=(
+    "$HOME/dev"
+    "$HOME/work"
+    "$HOME/Documents"
+)
+
+if [[ -n "$1" ]]; then
+    selected="$1"
+else
+    # Show sessions, minus current
+    if [[ -n "$TMUX" ]]; then
+        current_session=$(tmux display-message -p '#S')
+        tmux_sessions=$(tmux list-sessions -F "[TMUX] #{session_name}" 2>/dev/null | grep -vFx "[TMUX] $current_session")
+    else
+        tmux_sessions=$(tmux list-sessions -F "[TMUX] #{session_name}" 2>/dev/null)
+    fi
+
+    # Build the list, current sessions go first
+    selected=$(
+        { echo "$tmux_sessions"; find "${search_dirs[@]}" -mindepth 1 -maxdepth 1 -type d 2>/dev/null | sed "s|^$HOME/||"; } \
+            | grep -v '^$' \
+            | fzf
+    )
+fi
+
+[ -z "$selected" ] && exit 0
+
+# it session selected exist, attach
+if [[ "$selected" =~ ^\[TMUX\]\ (.+)$ ]]; then
+    session_name="${BASH_REMATCH[1]}"
+    if [ -z "$TMUX" ]; then
+        tmux attach-session -t "=$session_name"
+    else
+        tmux switch-client -t "=$session_name"
+    fi
+    exit 0
+fi
+
+# restore full path if it was stripped for display
+if [[ "$selected" != /* ]]; then
+    selected="$HOME/$selected"
+fi
+
+session_name=$(basename "$selected" | tr . _)
+
+if ! tmux has-session -t "=$session_name" 2>/dev/null; then
+    tmux new-session -ds "$session_name" -c "$selected"
+fi
+
+if [ -z "$TMUX" ]; then
+    tmux attach-session -t "=$session_name"
+else
+    tmux switch-client -t "=$session_name"
+fi
