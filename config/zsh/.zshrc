@@ -23,7 +23,7 @@ fi
 
 # Activate mise if installed
 if command -v mise &> /dev/null; then
-  eval "$(mise activate zsh)"
+  eval "$(mise activate zsh --shims)"
 fi
 
 
