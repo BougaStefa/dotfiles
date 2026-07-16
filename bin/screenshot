@@ -7,7 +7,7 @@ for cmd in maim xclip notify-send; do
   command -v "$cmd" &>/dev/null || { echo "Missing: $cmd" >&2; exit 1; }
 done
 
-OUTDIR="${2:-$HOME/Pictures}"
+OUTDIR="${2:-$HOME/Pictures/Screenshots}"
 mkdir -p "$OUTDIR"
 FILE="$OUTDIR/$(date +%Y%m%d_%H%M%S).png"
 
