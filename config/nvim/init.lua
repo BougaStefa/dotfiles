@@ -54,10 +54,10 @@ require("telescope").setup({
 	}
 })
 
-require("nvim-treesitter").install { "lua", "go", "javascript", "markdown", "rust", "c" }
+require("nvim-treesitter").install { "lua", "go", "javascript", "markdown", "rust", "c" , "c_sharp"}
 
 -- LSPs
-vim.lsp.enable({ "lua_ls", "gopls", "clangd" })
+vim.lsp.enable({ "lua_ls", "gopls", "clangd", "roslyn_ls" })
 
 -- Autocmds
 vim.api.nvim_create_autocmd("TextYankPost", {
