@@ -33,6 +33,8 @@ vim.pack.add({
 	'https://github.com/rcarriga/nvim-dap-ui',
 	'https://github.com/nvim-neotest/nvim-nio', -- required dep of dap-ui
 	'https://github.com/theHamsta/nvim-dap-virtual-text',
+	{ src = 'https://github.com/saghen/blink.cmp', version = 'v1.10.2' },
+	'https://github.com/rafamadriz/friendly-snippets',
 })
 
 vim.cmd.colorscheme("gruvbox")
@@ -59,6 +61,26 @@ require("telescope").setup({
 })
 
 require("nvim-treesitter").install { "lua", "go", "javascript", "markdown", "rust", "c" , "c_sharp"}
+
+-- completion
+require("blink.cmp").setup({
+	keymap = {
+		preset = "none",
+		["<C-n>"] = { "select_next", "fallback" },
+		["<C-p>"] = { "select_prev", "fallback" },
+		["<C-y>"] = { "select_and_accept", "fallback" },
+		["<C-e>"] = { "hide", "fallback" },
+		["<C-space>"] = { "show", "show_documentation", "hide_documentation" },
+	},
+	completion = {
+		menu = { auto_show = true },
+		list = { selection = { preselect = false, auto_insert = false } },
+	},
+	sources = {
+		default = { "lsp", "path", "snippets", "buffer" },
+	},
+	signature = { enabled = true },
+})
 
 -- DAP
 local dap = require("dap")
@@ -119,10 +141,8 @@ vim.api.nvim_create_autocmd('LspAttach', {
 	callback = function(args)
 		vim.o.signcolumn = 'yes:1'
 		local client = assert(vim.lsp.get_client_by_id(args.data.client_id))
-		if client:supports_method('textDocument/completion') then
-			vim.o.complete = 'o,.,w,b,u'
-			vim.o.completeopt = 'menu,menuone,popup,noinsert'
-			vim.lsp.completion.enable(true, client.id, args.buf, { autotrigger = true })
+		if client:supports_method('textDocument/definition') then
+			vim.keymap.set("n", "gd", vim.lsp.buf.definition, { buffer = args.buf, desc = "Go to definition" })
 		end
 	end
 })
