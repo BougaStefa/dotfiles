@@ -29,6 +29,10 @@ vim.pack.add({
 	'https://github.com/nvim-lua/plenary.nvim',
 	'https://github.com/nvim-treesitter/nvim-treesitter',
 	'https://github.com/christoomey/vim-tmux-navigator',
+	'https://github.com/mfussenegger/nvim-dap',
+	'https://github.com/rcarriga/nvim-dap-ui',
+	'https://github.com/nvim-neotest/nvim-nio', -- required dep of dap-ui
+	'https://github.com/theHamsta/nvim-dap-virtual-text',
 })
 
 vim.cmd.colorscheme("gruvbox")
@@ -55,6 +59,45 @@ require("telescope").setup({
 })
 
 require("nvim-treesitter").install { "lua", "go", "javascript", "markdown", "rust", "c" , "c_sharp"}
+
+-- DAP
+local dap = require("dap")
+local dapui = require("dapui")
+dapui.setup()
+require("nvim-dap-virtual-text").setup()
+dap.listeners.after.event_initialized["dapui_config"] = function() dapui.open() end
+dap.listeners.before.event_terminated["dapui_config"] = function() dapui.close() end
+dap.listeners.before.event_exited["dapui_config"] = function() dapui.close() end
+dap.adapters.coreclr = {
+	type = "executable",
+	command = "netcoredbg",
+	args = { "--interpreter=vscode" },
+}
+dap.configurations.cs = {
+	{
+		type = "coreclr",
+		name = "Launch (netcoredbg)",
+		request = "launch",
+		program = function()
+			local default = vim.fn.getcwd() .. "/bin/Debug/net10.0/" .. vim.fn.fnamemodify(vim.fn.getcwd(), ":t") .. ".dll"
+			return vim.fn.input("Path to dll: ", default, "file")
+		end,
+	},
+	{
+		type = "coreclr",
+		name = "Attach (netcoredbg)",
+		request = "attach",
+		processId = require("dap.utils").pick_process,
+	},
+}
+
+-- DAP mappings
+vim.keymap.set("n", "<F5>", dap.continue, { desc = "Debug: Continue" })
+vim.keymap.set("n", "<F10>", dap.step_over, { desc = "Debug: Step over" })
+vim.keymap.set("n", "<F11>", dap.step_into, { desc = "Debug: Step into" })
+vim.keymap.set("n", "<F12>", dap.step_out, { desc = "Debug: Step out" })
+vim.keymap.set("n", "<leader>b", dap.toggle_breakpoint, { desc = "Debug: Toggle breakpoint" })
+vim.keymap.set("n", "<leader>dt", dap.terminate, { desc = "Debug: Terminate" })
 
 -- LSPs
 vim.lsp.enable({ "lua_ls", "gopls", "clangd", "roslyn_ls" })
