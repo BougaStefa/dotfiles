@@ -12,8 +12,14 @@ case "$BLOCK_BUTTON" in
         ;;
 esac
 
-vol=$(pactl get-sink-volume @DEFAULT_SINK@ | grep -o '[0-9]\+%' | head -n1 | tr -d '%')
-mute=$(pactl get-sink-mute @DEFAULT_SINK@ | awk '{print $2}')
+tries=0
+while [ -z "$vol" ] && [ "$tries" -lt 10 ]; do
+    vol=$(pactl get-sink-volume @DEFAULT_SINK@ 2>/dev/null | grep -o '[0-9]\+%' | head -n1 | tr -d '%')
+    [ -z "$vol" ] && sleep 0.5
+    tries=$((tries + 1))
+done
+mute=$(pactl get-sink-mute @DEFAULT_SINK@ 2>/dev/null | awk '{print $2}')
+vol=${vol:-0}
 
 if [ "$mute" = "yes" ] || [ "$vol" -eq 0 ]; then
     echo "^b#111111^^c#ddc7a1^󰖁 muted^d^"
