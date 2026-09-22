@@ -60,7 +60,7 @@ require("telescope").setup({
 	}
 })
 
-require("nvim-treesitter").install { "lua", "go", "javascript", "markdown", "rust", "c" , "c_sharp"}
+require("nvim-treesitter").install { "lua", "go", "javascript", "markdown", "rust", "c", "c_sharp" }
 
 -- completion
 require("blink.cmp").setup({
@@ -73,13 +73,45 @@ require("blink.cmp").setup({
 		["<C-space>"] = { "show", "show_documentation", "hide_documentation" },
 	},
 	completion = {
-		menu = { auto_show = true },
+		menu = {
+			auto_show = true,
+			border = "none",
+			winhighlight = "Normal:BlinkCmpMenu,FloatBorder:BlinkCmpMenuBorder,CursorLine:BlinkCmpMenuSelection",
+			draw = {
+				components = {
+					kind_icon = {
+						text = function(ctx)
+							if ctx.kind == 'Snippet' then
+								return '󰩫'
+							end
+							local kind_icon, _, _ = require('mini.icons').get('lsp', ctx.kind)
+							return kind_icon
+						end,
+						highlight = function(ctx)
+							local _, hl, _ = require('mini.icons').get('lsp', ctx.kind)
+							return hl
+						end,
+					},
+					kind = {
+						highlight = function(ctx)
+							local _, hl, _ = require('mini.icons').get('lsp', ctx.kind)
+							return hl
+						end,
+					}
+				}
+			}
+		},
+		documentation = {
+			auto_show = true,
+			auto_show_delay_ms = 200,
+			window = { border = "none" },
+		},
 		list = { selection = { preselect = false, auto_insert = false } },
 	},
 	sources = {
 		default = { "lsp", "path", "snippets", "buffer" },
 	},
-	signature = { enabled = true },
+	signature = { enabled = true, window = { border = "rounded" }, },
 })
 
 -- DAP
