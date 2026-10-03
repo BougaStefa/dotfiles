@@ -37,6 +37,7 @@ vim.pack.add({
 	'https://github.com/rafamadriz/friendly-snippets',
 })
 
+require("gruvbox").setup({ transparent_mode = true })
 vim.cmd.colorscheme("gruvbox")
 
 -- Package setup
