@@ -19,6 +19,7 @@ git config --global init.defaultBranch master
 git config --global dieff.colorMoved zebra
 git config --global rebase.autoStash true
 git config --global fetch.prune true
+git config --global diff.tool nvimdiff
 
 if [[ -n "${USER_NAME//[[:space:]]/}" ]]; then
   echo "==> Setting git user.name to '$USER_NAME'..."
