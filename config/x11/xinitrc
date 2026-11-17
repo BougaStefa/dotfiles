@@ -8,6 +8,8 @@ else
 	. "$HOME/.xprofile"
 fi
 
+export XDG_SESSION_TYPE=x11
+
 # Update dbus environment with all variables
 dbus-update-activation-environment --systemd --all
 
@@ -17,3 +19,4 @@ while true; do
     dwm
     sleep 1
 done
+

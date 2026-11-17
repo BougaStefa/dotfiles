@@ -86,3 +86,4 @@ xorg-xdpyinfo,X display info (deskview scaling),system
 libx11,X11 client library (suckless builds),system
 libxft,Xft font rendering (suckless builds),system
 libxinerama,Xinerama multi-monitor (dwm/dmenu builds),system
+git-delta,Syntax-highlighted diffs for git and sync.sh,system

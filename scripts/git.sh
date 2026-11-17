@@ -21,6 +21,14 @@ git config --global rebase.autoStash true
 git config --global fetch.prune true
 git config --global diff.tool nvimdiff
 
+echo "==> Setting delta as the diff pager..."
+git config --global core.pager delta
+git config --global interactive.diffFilter "delta --color-only"
+git config --global delta.navigate true            # n / N jump between files
+git config --global delta.line-numbers true
+git config --global delta.syntax-theme gruvbox-dark
+git config --global merge.conflictStyle zdiff3
+
 if [[ -n "${USER_NAME//[[:space:]]/}" ]]; then
   echo "==> Setting git user.name to '$USER_NAME'..."
   git config --global user.name "$USER_NAME"
