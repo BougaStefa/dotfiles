@@ -79,3 +79,7 @@ zathura-pdf-mupdf,Zathura plugin,media
 zen-browser-bin,Firefork,media
 zsh,zee shell,system
 zsh-fast-syntax-highlighting,Name kind of already says it all,system
+tailscale,Mesh VPN to reach my other machines,system
+tigervnc,VNC viewer used by deskview,system
+x11vnc,On-demand VNC server for deskview,system
+xorg-xdpyinfo,X display info (deskview scaling),system

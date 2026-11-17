@@ -1,0 +1,159 @@
+#!/usr/bin/env bash
+# deskview — view the live X session on the desktop over an SSH-tunnelled x11vnc.
+#
+# Starts x11vnc on demand on the desktop (bound to its localhost only, single
+# client, exits when the viewer disconnects), forwards it to a local port over
+# SSH, opens vncviewer, and tears the tunnel down when the viewer closes.
+#
+# The desktop is scaled server-side to fit this machine's primary monitor, and
+# the viewer opens full screen and grabs the keyboard, so dwm shortcuts go to
+# the desktop. Ctrl+Alt releases the keyboard to the laptop, Ctrl+Alt+G grabs
+# it again, Ctrl+Alt+M opens the menu (exit), Ctrl+Alt+Enter toggles full screen.
+#
+# Usage: deskview [--slow] [extra vncviewer options...]
+#   --slow   stronger compression / lower JPEG quality, for use away from home
+#   e.g. deskview -FullScreen=0        # windowed instead of full screen
+#
+# Environment overrides:
+#   DESKVIEW_HOST          ssh host alias          (default: desktop)
+#   DESKVIEW_DISPLAY       remote X display        (default: :0)
+#   DESKVIEW_FIT           WxH to scale to fit     (default: local primary monitor;
+#                                                   "none" disables scaling)
+#   DESKVIEW_LOCAL_PORT    local tunnel port       (default: first free from 5900)
+#   DESKVIEW_X11VNC_OPTS   extra x11vnc options
+#   DESKVIEW_TIMEOUT       seconds to wait for x11vnc (default: 20)
+
+set -euo pipefail
+
+host=${DESKVIEW_HOST:-desktop}
+display=${DESKVIEW_DISPLAY:-:0}
+remote_port=5900
+timeout=${DESKVIEW_TIMEOUT:-20}
+extra_x11vnc=${DESKVIEW_X11VNC_OPTS:-}
+
+viewer_opts=(-FullScreen=1 -RemoteResize=0)
+if [[ ${1:-} == --slow ]]; then
+    shift
+    viewer_opts+=(-AutoSelect=0 -PreferredEncoding=Tight -QualityLevel=4 -CompressLevel=6)
+fi
+
+die() { echo "deskview: $*" >&2; exit 1; }
+
+[[ $display =~ ^:[0-9]+(\.[0-9]+)?$ ]] || die "bad DESKVIEW_DISPLAY: $display"
+
+# --- size to fit -----------------------------------------------------------
+fit=${DESKVIEW_FIT:-}
+if [[ -z $fit ]] && command -v xrandr >/dev/null; then
+    fit=$(xrandr --current 2>/dev/null | awk '
+        / connected primary [0-9]+x[0-9]+/ { split($4, a, "+"); print a[1]; found=1; exit }
+        / connected [0-9]+x[0-9]+/ && !first { split($3, a, "+"); first=a[1] }
+        END { if (!found && first) print first }')
+fi
+fit_w=0 fit_h=0
+if [[ $fit =~ ^([0-9]+)x([0-9]+)$ ]]; then
+    fit_w=${BASH_REMATCH[1]} fit_h=${BASH_REMATCH[2]}
+elif [[ -n $fit && $fit != none ]]; then
+    die "bad DESKVIEW_FIT: $fit (want WxH or none)"
+fi
+
+# --- pick a local port -----------------------------------------------------
+port_in_use() { (exec 3<>"/dev/tcp/127.0.0.1/$1") 2>/dev/null; }
+
+if [[ -n ${DESKVIEW_LOCAL_PORT:-} ]]; then
+    local_port=$DESKVIEW_LOCAL_PORT
+    port_in_use "$local_port" && die "local port $local_port is already in use"
+else
+    local_port=5900
+    while port_in_use "$local_port"; do
+        local_port=$((local_port + 1))
+        (( local_port > 5999 )) && die "no free local port in 5900-5999"
+    done
+fi
+
+# --- remote side -----------------------------------------------------------
+# Runs on the desktop: work out a scale factor that fits the remote screen
+# into FIT_W x FIT_H (never upscale), then exec x11vnc.
+# shellcheck disable=SC2016  # expanded on the remote side
+remote_script='
+D=$1 FW=$2 FH=$3 PORT=$4; shift 4
+scale=
+if [ "$FW" -gt 0 ] && [ "$FH" -gt 0 ]; then
+    dims=$(DISPLAY=$D xdpyinfo 2>/dev/null | awk "/dimensions:/ {print \$2; exit}")
+    scale=$(echo "$dims" | awk -F x -v fw="$FW" -v fh="$FH" "
+        NF == 2 && \$1 > 0 && \$2 > 0 { s = fw / \$1; t = fh / \$2; if (t < s) s = t;
+                                        if (s < 1) printf \"%.4f\", s }")
+    echo "deskview-remote: screen ${dims:-unknown}, scale ${scale:-1}"
+fi
+exec x11vnc -display "$D" -auth guess -localhost -once -nopw -rfbport "$PORT" \
+    -desktop deskview -repeat -quiet -wait 10 -defer 10 ${scale:+-scale "$scale"} "$@"
+'
+# -desktop deskview: tags the process so cleanup can find it.
+# -repeat: leave keyboard autorepeat alone. By default x11vnc turns it off
+#   while a viewer is connected and restores it from its signal handler,
+#   which can deadlock inside Xlib if the signal lands mid screen-grab,
+#   leaving x11vnc hung and the desktop with autorepeat off.
+
+# shellcheck disable=SC2206  # extra_x11vnc is intentionally word-split
+remote_cmd=(sh -c "$remote_script" deskview "$display" "$fit_w" "$fit_h" "$remote_port" $extra_x11vnc)
+remote_cmd_str=$(printf '%q ' "${remote_cmd[@]}")
+
+log=$(mktemp -t deskview.XXXXXX)
+ssh_pid=
+
+cleanup() {
+    local forced=0 i
+    if [[ -n $ssh_pid ]] && kill -0 "$ssh_pid" 2>/dev/null; then
+        # Give x11vnc time to exit on its own (-once) after the viewer closes;
+        # killing the tunnel first sends it a SIGHUP mid-work.
+        for ((i = 0; i < 25; i++)); do
+            kill -0 "$ssh_pid" 2>/dev/null || break
+            sleep 0.2
+        done
+        if kill -0 "$ssh_pid" 2>/dev/null; then
+            forced=1
+            kill "$ssh_pid" 2>/dev/null || true
+        fi
+        wait "$ssh_pid" 2>/dev/null || true
+    fi
+    if (( forced )); then
+        # Backstop: make sure no x11vnc of ours is left behind on the desktop.
+        ssh -o BatchMode=yes -o ConnectTimeout=5 "$host" \
+            'pkill -KILL -f "^x11vnc .*-desktop deskview" && echo "deskview: killed leftover x11vnc" >&2' \
+            </dev/null || true
+    fi
+    rm -f "$log"
+}
+trap cleanup EXIT
+trap 'exit 130' INT TERM
+
+# -tt gives the remote side a pty, so x11vnc gets SIGHUP and exits if the
+# tunnel dies before a viewer ever connects.
+ssh -tt -o ExitOnForwardFailure=yes -o ServerAliveInterval=15 \
+    -L "127.0.0.1:${local_port}:localhost:${remote_port}" "$host" \
+    "$remote_cmd_str" </dev/null >"$log" 2>&1 &
+ssh_pid=$!
+
+# The local forward listens immediately, so wait for x11vnc's own ready line.
+echo "deskview: starting x11vnc on $host (display $display)..." >&2
+deadline=$((SECONDS + timeout))
+until grep -q '^PORT=' "$log"; do
+    if ! kill -0 "$ssh_pid" 2>/dev/null; then
+        echo "deskview: tunnel/x11vnc exited before becoming ready:" >&2
+        tr -d '\r' <"$log" | tail -20 >&2
+        exit 1
+    fi
+    if (( SECONDS >= deadline )); then
+        echo "deskview: timed out after ${timeout}s waiting for x11vnc:" >&2
+        tr -d '\r' <"$log" | tail -20 >&2
+        exit 1
+    fi
+    sleep 0.2
+done
+
+tr -d '\r' <"$log" | grep '^deskview-remote:' >&2 || true
+got_port=$(tr -d '\r' <"$log" | sed -n 's/^PORT=//p' | head -1)
+[[ $got_port == "$remote_port" ]] ||
+    die "x11vnc came up on remote port $got_port, not $remote_port (another VNC server running there?)"
+
+echo "deskview: connected — Ctrl+Alt releases keyboard, Ctrl+Alt+G grabs, Ctrl+Alt+M menu/exit" >&2
+vncviewer "${viewer_opts[@]}" "$@" "localhost::${local_port}" || true

@@ -1,0 +1,10 @@
+# Deployed to ~/.config/ssh/config, ~/.ssh/config symlinks here (scripts/config.sh).
+# Specific Host blocks first: ssh uses the first value it finds for each option.
+
+Host desktop
+    HostName archpc
+    User mertang
+
+Host *
+    # First use after login asks for the passphrase once, then the agent holds it.
+    AddKeysToAgent yes
