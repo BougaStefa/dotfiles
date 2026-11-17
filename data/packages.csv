@@ -83,3 +83,6 @@ tailscale,Mesh VPN to reach my other machines,system
 tigervnc,VNC viewer used by deskview,system
 x11vnc,On-demand VNC server for deskview,system
 xorg-xdpyinfo,X display info (deskview scaling),system
+libx11,X11 client library (suckless builds),system
+libxft,Xft font rendering (suckless builds),system
+libxinerama,Xinerama multi-monitor (dwm/dmenu builds),system
