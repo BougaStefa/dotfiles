@@ -3,7 +3,7 @@
 set -eEu
 
 echo "==> Installing essential packages: base-devel, reflector..."
-sudo pacman -Sy --needed --noconfirm base-devel reflector
+sudo pacman -Syu --needed --noconfirm base-devel reflector
 
 echo "==> Updating Arch Linux mirrorlist with reflector..."
 sudo reflector --country 'United Kingdom,Germany' --age 12 --protocol https --sort rate --save /etc/pacman.d/mirrorlist

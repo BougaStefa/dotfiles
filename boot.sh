@@ -24,13 +24,13 @@ fi
 echo "==> Ensuring git is installed..."
 if ! command -v git &>/dev/null; then
   echo "==> Installing git..."
-  sudo pacman -Sy --noconfirm --needed git
+  sudo pacman -Syu --noconfirm --needed git
 fi
 
 echo "==> Ensuring gum is installed..."
 if ! command -v gum &>/dev/null; then
   echo "==> Installing gum..."
-  sudo pacman -Sy --noconfirm --needed gum
+  sudo pacman -Syu --noconfirm --needed gum
 fi
 
 DOTFILES_REPO="BougaStefa/dotfiles"
