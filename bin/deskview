@@ -85,13 +85,16 @@ if [ "$FW" -gt 0 ] && [ "$FH" -gt 0 ]; then
     echo "deskview-remote: screen ${dims:-unknown}, scale ${scale:-1}"
 fi
 exec x11vnc -display "$D" -auth guess -localhost -once -nopw -rfbport "$PORT" \
-    -desktop deskview -repeat -quiet -wait 10 -defer 10 ${scale:+-scale "$scale"} "$@"
+    -desktop deskview -quiet -wait 10 -defer 10 ${scale:+-scale "$scale"} "$@"
 '
 # -desktop deskview: tags the process so cleanup can find it.
-# -repeat: leave keyboard autorepeat alone. By default x11vnc turns it off
-#   while a viewer is connected and restores it from its signal handler,
-#   which can deadlock inside Xlib if the signal lands mid screen-grab,
-#   leaving x11vnc hung and the desktop with autorepeat off.
+# Autorepeat: x11vnc's default (-norepeat) turns the desktop's key autorepeat
+#   off while a viewer is connected. Keep it: with -repeat, a key-up delayed by
+#   a big redraw (e.g. opening telescope) makes the desktop repeat the key
+#   ("ffffff"). The viewer's own autorepeat still works. x11vnc restores
+#   autorepeat when it exits; the cleanup backstop below re-enables it too, in
+#   case x11vnc had to be killed (its signal handler can deadlock mid
+#   screen-grab, which would leave autorepeat off).
 
 # shellcheck disable=SC2206  # extra_x11vnc is intentionally word-split
 remote_cmd=(sh -c "$remote_script" deskview "$display" "$fit_w" "$fit_h" "$remote_port" $extra_x11vnc)
@@ -118,7 +121,7 @@ cleanup() {
     if (( forced )); then
         # Backstop: make sure no x11vnc of ours is left behind on the desktop.
         ssh -o BatchMode=yes -o ConnectTimeout=5 "$host" \
-            'pkill -KILL -f "^x11vnc .*-desktop deskview" && echo "deskview: killed leftover x11vnc" >&2' \
+            'if pkill -KILL -f "^x11vnc .*-desktop deskview"; then echo "deskview: killed leftover x11vnc" >&2; DISPLAY='"$display"' xset r on; fi' \
             </dev/null || true
     fi
     rm -f "$log"
