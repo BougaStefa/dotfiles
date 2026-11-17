@@ -16,7 +16,7 @@ git config --global alias.ci commit
 git config --global alias.st status
 git config --global pull.rebase true
 git config --global init.defaultBranch master
-git config --global dieff.colorMoved zebra
+git config --global diff.colorMoved zebra
 git config --global rebase.autoStash true
 git config --global fetch.prune true
 git config --global diff.tool nvimdiff
