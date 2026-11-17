@@ -76,7 +76,7 @@ xwallpaper,Simple wallpaper setter (testing vs feh),system
 yt-dlp,YouTube downloader,media
 zathura,PDF viewer,media
 zathura-pdf-mupdf,Zathura plugin,media
-zen-browser-bin,Firefork,media
+helium-browser-bin,Chromium-based browser,media
 zsh,zee shell,system
 zsh-fast-syntax-highlighting,Name kind of already says it all,system
 tailscale,Mesh VPN to reach my other machines,system
