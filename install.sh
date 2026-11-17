@@ -11,6 +11,9 @@ echo "==> Granting temporary passwordless sudo to wheel group..."
 echo "%wheel ALL=(ALL) NOPASSWD: ALL" | sudo tee /etc/sudoers.d/setup-temp >/dev/null
 trap 'sudo rm -f /etc/sudoers.d/setup-temp' EXIT
 
+echo "==> Configuring sudo..."
+source "$DOTFILES_SCRIPTS_DIR/sudoers.sh"
+
 
 catch_errors() {
   echo -e "\n\e[31mInstallation failed!\e[0m"
@@ -40,9 +43,6 @@ source "$DOTFILES_SCRIPTS_DIR/assets.sh"
 
 echo "==> Setting up mise and installing global tools..."
 source "$DOTFILES_SCRIPTS_DIR/mise.sh"
-
-echo "==> Setting up tmux plugins..."
-bash "$DOTFILES_SCRIPTS_DIR/tmux.sh"
 
 echo "==> Configuring git..."
 source "$DOTFILES_SCRIPTS_DIR/git.sh"
