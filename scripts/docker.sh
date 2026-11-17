@@ -2,6 +2,11 @@
 
 set -e
 
+if ! command -v docker &>/dev/null; then
+  echo "==> Docker not installed (not in the chosen package category), skipping."
+  return 0
+fi
+
 echo "==> Configuring Docker daemon..."
 sudo mkdir -p /etc/docker
 sudo tee /etc/docker/daemon.json >/dev/null <<'EOF'
