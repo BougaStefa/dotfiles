@@ -162,7 +162,10 @@ vim.keymap.set("n", "<leader>b", dap.toggle_breakpoint, { desc = "Debug: Toggle 
 vim.keymap.set("n", "<leader>dt", dap.terminate, { desc = "Debug: Terminate" })
 
 -- LSPs
-vim.lsp.enable({ "lua_ls", "gopls", "clangd", "roslyn_ls" })
+vim.lsp.config('basedpyright', {
+	settings = { basedpyright = { analysis = { typeCheckingMode = "standard" } } },
+})
+vim.lsp.enable({ "lua_ls", "gopls", "clangd", "roslyn_ls", "basedpyright", "ruff" })
 
 -- Autocmds
 vim.api.nvim_create_autocmd("TextYankPost", {
@@ -181,6 +184,10 @@ vim.api.nvim_create_autocmd('LspAttach', {
 	callback = function(args)
 		vim.o.signcolumn = 'yes:1'
 		local client = assert(vim.lsp.get_client_by_id(args.data.client_id))
+		-- let basedpyright handle hover for python
+		if client.name == 'ruff' then
+			client.server_capabilities.hoverProvider = false
+		end
 		if client:supports_method('textDocument/definition') then
 			vim.keymap.set("n", "gd", vim.lsp.buf.definition, { buffer = args.buf, desc = "Go to definition" })
 		end
