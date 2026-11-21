@@ -35,6 +35,8 @@ vim.pack.add({
 	'https://github.com/theHamsta/nvim-dap-virtual-text',
 	{ src = 'https://github.com/saghen/blink.cmp', version = 'v1.10.2' },
 	'https://github.com/rafamadriz/friendly-snippets',
+	'https://github.com/kawre/leetcode.nvim',
+	'https://github.com/MunifTanjim/nui.nvim', -- required dep of leetcode.nvim
 })
 
 require("gruvbox").setup({ transparent_mode = true })
@@ -61,7 +63,12 @@ require("telescope").setup({
 	}
 })
 
-require("nvim-treesitter").install { "lua", "go", "javascript", "markdown", "rust", "c", "c_sharp" }
+require("nvim-treesitter").install { "lua", "go", "javascript", "markdown", "rust", "c", "c_sharp", "html" }
+
+require("leetcode").setup({
+	lang = "python3",
+	picker = { provider = "telescope" },
+})
 
 -- completion
 require("blink.cmp").setup({
