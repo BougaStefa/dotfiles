@@ -16,7 +16,7 @@ esac
 # Airplane mode check
 for rf in /sys/class/net/"$iface"/phy80211/rfkill*; do
     if [ "$(cat "$rf/soft" 2>/dev/null)" = 1 ] || [ "$(cat "$rf/hard" 2>/dev/null)" = 1 ]; then
-        echo "^b#111111^^c#ddc7a1^󰀝^d^"
+        echo "^b#111111^^c#ddc7a1^󰀝 ^d^"
         exit 0
     fi
 done
@@ -24,14 +24,9 @@ done
 state=$(cat "/sys/class/net/$iface/operstate" 2>/dev/null)
 
 if [ "$state" != "up" ]; then
-    echo "^b#111111^^c#ddc7a1^󰤮 off^d^"
+    echo "^b#111111^^c#ddc7a1^󰤮 ^d^"
     exit 0
 fi
-
-# Connected network name (strip iwctl's colour codes and padding)
-ssid=$(iwctl station "$iface" show 2>/dev/null \
-    | sed 's/\x1b\[[0-9;]*m//g' \
-    | awk '/Connected network/ { $1 = $2 = ""; sub(/^ +/, ""); sub(/ +$/, ""); print }')
 
 # Link quality (0-70) from /proc/net/wireless, as a percentage
 qual=$(awk -v i="$iface:" '$1 == i { print int($3 * 100 / 70) }' /proc/net/wireless)
@@ -47,4 +42,4 @@ else
     icon="󰤟"
 fi
 
-echo "^b#111111^^c#ddc7a1^$icon ${ssid:-connected}^d^"
+echo "^b#111111^^c#ddc7a1^$icon ^d^"
