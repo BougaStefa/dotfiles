@@ -4,6 +4,8 @@ case "$BLOCK_BUTTON" in
     1)  st -t pulsemixer -g 96x29 -e pulsemixer
         kill -44 $(pidof dwmblocks)
         ;;
+    2)  micmute
+        ;;
     3)  pactl set-sink-mute @DEFAULT_SINK@ toggle
         ;;
     4)  pactl set-sink-volume @DEFAULT_SINK@ +5%
@@ -21,12 +23,16 @@ done
 mute=$(pactl get-sink-mute @DEFAULT_SINK@ 2>/dev/null | awk '{print $2}')
 vol=${vol:-0}
 
+# Mic-off icon in front of the volume, only while the mic is muted
+mic=""
+[ "$(pactl get-source-mute @DEFAULT_SOURCE@ 2>/dev/null | awk '{print $2}')" = "yes" ] && mic="󰍭 "
+
 if [ "$mute" = "yes" ] || [ "$vol" -eq 0 ]; then
-    echo "^b#111111^^c#ddc7a1^󰖁 muted^d^"
+    echo "^b#111111^^c#ddc7a1^$mic󰖁 muted^d^"
 elif [ "$vol" -ge 70 ]; then
-    echo "^b#111111^^c#ddc7a1^󰕾 $vol%^d^"
+    echo "^b#111111^^c#ddc7a1^$mic󰕾 $vol%^d^"
 elif [ "$vol" -ge 30 ]; then
-    echo "^b#111111^^c#ddc7a1^󰖀 $vol%^d^"
+    echo "^b#111111^^c#ddc7a1^$mic󰖀 $vol%^d^"
 else
-    echo "^b#111111^^c#ddc7a1^󰕿 $vol%^d^"
+    echo "^b#111111^^c#ddc7a1^$mic󰕿 $vol%^d^"
 fi
