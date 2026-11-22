@@ -1,0 +1,11 @@
+#!/bin/sh
+# Toggle the default mic's mute and keep the ThinkPad mic-mute LED in step.
+# The built-in digital mic (AMD acp) isn't wired to the LED's audio trigger,
+# so set the LED from the real mute state: lit = muted.
+#   micmute        toggle, then sync the LED
+#   micmute sync   only sync the LED (e.g. at login)
+
+[ "$1" = sync ] || wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle
+
+if wpctl get-volume @DEFAULT_AUDIO_SOURCE@ | grep -q MUTED; then led=1; else led=0; fi
+brightnessctl -q -d 'platform::micmute' set "$led" 2>/dev/null || true
