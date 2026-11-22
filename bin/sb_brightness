@@ -1,0 +1,31 @@
+#!/bin/sh
+
+# Brightness block. Exits silently if there is no backlight (e.g. desktop).
+#   left click   reset to DEFAULT
+#   scroll       up/down by STEP
+DEFAULT=50   # %
+STEP=5       # %
+
+ls /sys/class/backlight/* >/dev/null 2>&1 || exit 0
+
+case "$BLOCK_BUTTON" in
+    1)  brightnessctl -q set "$DEFAULT%"
+        ;;
+    4)  brightnessctl -q set "$STEP%+"
+        ;;
+    5)  brightnessctl -q -n set "$STEP%-"   # -n: never go fully dark
+        ;;
+esac
+
+bri=$(brightnessctl -m 2>/dev/null | cut -d, -f4 | tr -d '%')
+[ -z "$bri" ] && exit 0
+
+if [ "$bri" -ge 70 ]; then
+    icon="󰃠"
+elif [ "$bri" -ge 30 ]; then
+    icon="󰃟"
+else
+    icon="󰃞"
+fi
+
+echo "^b#111111^^c#ddc7a1^$icon  $bri%^d^"
