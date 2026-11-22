@@ -1,0 +1,42 @@
+#!/bin/sh
+
+# Exit silently if there's no WiFi interface
+iface=""
+for dev in /sys/class/net/*/wireless; do
+    [ -d "$dev" ] && iface=$(basename "$(dirname "$dev")") && break
+done
+[ -z "$iface" ] && exit 0
+
+case "$BLOCK_BUTTON" in
+    1)  st -t impala -g 96x29 -e impala
+        kill -47 $(pidof dwmblocks)
+        ;;
+esac
+
+state=$(cat "/sys/class/net/$iface/operstate" 2>/dev/null)
+
+if [ "$state" != "up" ]; then
+    echo "^b#111111^^c#ddc7a1^󰤮 off^d^"
+    exit 0
+fi
+
+# Connected network name (strip iwctl's colour codes and padding)
+ssid=$(iwctl station "$iface" show 2>/dev/null \
+    | sed 's/\x1b\[[0-9;]*m//g' \
+    | awk '/Connected network/ { $1 = $2 = ""; sub(/^ +/, ""); sub(/ +$/, ""); print }')
+
+# Link quality (0-70) from /proc/net/wireless, as a percentage
+qual=$(awk -v i="$iface:" '$1 == i { print int($3 * 100 / 70) }' /proc/net/wireless)
+qual=${qual:-0}
+
+if [ "$qual" -ge 75 ]; then
+    icon="󰤨"
+elif [ "$qual" -ge 50 ]; then
+    icon="󰤥"
+elif [ "$qual" -ge 25 ]; then
+    icon="󰤢"
+else
+    icon="󰤟"
+fi
+
+echo "^b#111111^^c#ddc7a1^$icon ${ssid:-connected}^d^"
