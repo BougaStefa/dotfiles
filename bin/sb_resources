@@ -1,0 +1,69 @@
+#!/bin/sh
+
+# Resources block: an always-visible icon, followed by any metric that is at or
+# above its threshold. Set a threshold to 0 to always show that metric.
+#   left click    toggle showing every metric regardless of thresholds
+#   middle click  open btop
+#   right click   notification with details and top processes
+TEMP_MAX=80  # CPU temperature, °C
+CPU_MAX=80   # CPU usage since the last update, %
+RAM_MAX=85   # RAM in use (excluding cache), %
+
+expanded="${XDG_RUNTIME_DIR:-/tmp}/sb_resources_expanded"
+
+case "$BLOCK_BUTTON" in
+    1)  if [ -e "$expanded" ]; then rm -f "$expanded"; else : > "$expanded"; fi
+        ;;
+    2)  st -t btop -g 96x29 -e btop
+        ;;
+    3)  notify=1
+        ;;
+esac
+
+# Expanded: drop every threshold to 0 so everything shows
+[ -e "$expanded" ] && TEMP_MAX=0 CPU_MAX=0 RAM_MAX=0
+
+# --- CPU temperature (AMD: Tctl, Intel: Package id 0) ---
+temp=$(sensors 2>/dev/null | awk '/^(Tctl|Package id 0):/ {
+    match($0, /\+[0-9]+/); print substr($0, RSTART + 1, RLENGTH - 1); exit }')
+
+# --- CPU usage: delta against the previous sample ---
+cache="${XDG_RUNTIME_DIR:-/tmp}/sb_resources_cpu"
+read -r _ user nice system idle iowait irq softirq steal _ < /proc/stat
+total=$((user + nice + system + idle + iowait + irq + softirq + steal))
+busy=$((total - idle - iowait))
+if [ -r "$cache" ]; then
+    read -r ptotal pbusy < "$cache"
+else
+    ptotal=0 pbusy=0
+fi
+echo "$total $busy" > "$cache"
+dt=$((total - ptotal))
+cpu=0
+[ "$dt" -gt 0 ] && cpu=$(( (busy - pbusy) * 100 / dt ))
+
+# --- RAM in use ---
+ram=$(awk '/^MemTotal:/ { t = $2 } /^MemAvailable:/ { a = $2 }
+    END { printf "%d", (t - a) * 100 / t }' /proc/meminfo)
+
+# --- Click: notification with details ---
+if [ -n "$notify" ]; then
+    top=$(ps -eo comm,%cpu --sort=-%cpu --no-headers | head -n5 \
+        | awk '{ printf "%-16s %5s%%\n", $1, $2 }')
+    notify-send -r 14 -a scripts "Resources" \
+        "Temp ${temp:-?}°C / CPU $cpu% / RAM $ram%
+
+<i>$top</i>"
+fi
+
+# --- Display: icon first, then anything over its threshold ---
+out="󰓅"
+[ -n "$temp" ] && [ "$temp" -ge "$TEMP_MAX" ] && out="$out 󰔏 ${temp}°"
+[ "$cpu" -ge "$CPU_MAX" ] && out="$out 󰍛 ${cpu}%"
+[ "$ram" -ge "$RAM_MAX" ] && out="$out   ${ram}%"
+# Expanded: drop the dial, the metrics speak for themselves
+[ -e "$expanded" ] && out="${out#󰓅 }"
+# Nothing over threshold: keep a trailing space so the icon isn't clipped
+[ "$out" = "󰓅" ] && out="󰓅 "
+
+echo "^b#111111^^c#ddc7a1^$out^d^"
