@@ -13,6 +13,14 @@ case "$BLOCK_BUTTON" in
         ;;
 esac
 
+# Airplane mode check
+for rf in /sys/class/net/"$iface"/phy80211/rfkill*; do
+    if [ "$(cat "$rf/soft" 2>/dev/null)" = 1 ] || [ "$(cat "$rf/hard" 2>/dev/null)" = 1 ]; then
+        echo "^b#111111^^c#ddc7a1^󰀝^d^"
+        exit 0
+    fi
+done
+
 state=$(cat "/sys/class/net/$iface/operstate" 2>/dev/null)
 
 if [ "$state" != "up" ]; then
