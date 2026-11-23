@@ -1,11 +1,4 @@
 gui:
-  authorColors: {}
-  branchColorPatterns: 
-    'main': "blue"
-    'master': "blue"
-    '^feature/': "green"
-    '^issue/': "red"
-    '^fix/': "yellow"
   customIcons:
     filenames: {}
     extensions: {}
@@ -25,8 +18,8 @@ gui:
   expandedSidePanelWeight: 2
   mainPanelSplitMode: flexible
   enlargedSideViewLocation: left
-  wrapLinesInStagingView: true
-  useHunkModeInStagingView: true
+  wrapLinesInDiffView: true
+  useHunkModeInDiffView: true
   language: auto
   timeFormat: 02 Jan 06
   shortTimeFormat: 3:04PM
@@ -57,6 +50,13 @@ gui:
       - red
     defaultFgColor:
       - default
+    authorColors: {}
+    branchColorPatterns:
+      'main': "blue"
+      'master': "blue"
+      '^feature/': "green"
+      '^issue/': "red"
+      '^fix/': "yellow"
   commitLength:
     show: true
   showListFooter: true
@@ -93,11 +93,9 @@ gui:
   switchToFilesAfterStashApply: true
   switchTabsWithPanelJumpKeys: false
 git:
-  paging:
-    colorArg: always
-    pager: ""
-    externalDiffCommand: ""
-    useExternalDiffGitConfig: false
+  diffRenderers:
+    - colorArg: always
+      type: rawGit
   commit:
     signOff: false
     autoWrapCommitMessage: true
@@ -158,9 +156,7 @@ disableStartupPopups: false
 customCommands: []
 services: {}
 notARepository: prompt
-
 promptToReturnFromSubprocess: true
-
 keybinding:
   universal:
     quit: q
@@ -244,6 +240,7 @@ keybinding:
     increaseRenameSimilarityThreshold: )
     decreaseRenameSimilarityThreshold: (
     openDiffTool: <c-t>
+    newWorktree: w
   status:
     checkForUpdate: u
     recentRepos: <enter>
@@ -263,7 +260,7 @@ keybinding:
     viewResetOptions: D
     fetch: f
     toggleTreeView: '`'
-    openMergeTool: M
+    openMergeOptions: M
     openStatusFilter: <c-b>
     copyFileInfoToClipboard: "y"
     collapseAll: '-'
@@ -286,8 +283,6 @@ keybinding:
     setUpstream: u
     fetchRemote: f
     sortOrder: s
-  worktrees:
-    viewWorktreeOptions: w
   commits:
     squashDown: s
     renameCommit: r
@@ -307,7 +302,6 @@ keybinding:
     markCommitAsBaseForRebase: B
     tagCommit: T
     checkoutCommit: <space>
-    resetCherryPick: <c-R>
     copyCommitAttributeToClipboard: "y"
     openLogMenu: <c-l>
     openInBrowser: o
